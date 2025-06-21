@@ -51,7 +51,7 @@ class Planets(db.Model):
     name: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
     terrain: Mapped[str] = mapped_column(
-        String(120), unique=false, nullable=True)
+        String(120), unique=False, nullable=True)
     population: Mapped[str] = mapped_column(
         String(120), unique=False, nullable=True)
 
