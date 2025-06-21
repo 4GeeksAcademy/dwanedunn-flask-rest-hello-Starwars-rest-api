@@ -31,11 +31,17 @@ class Characters(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
+    height: Mapped[str] = mapped_column(
+        String(80), unique=False, nullable=True)
+    eye_color: Mapped[str] = mapped_column(
+        String(80), unique=False, nullable=True)
 
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
+            "height": self.height,
+            "eye_color": self.eye_color
         }
 
 
@@ -44,11 +50,18 @@ class Planets(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(
         String(120), unique=True, nullable=False)
+    terrain: Mapped[str] = mapped_column(
+        String(120), unique=false, nullable=True)
+    population: Mapped[str] = mapped_column(
+        String(120), unique=False, nullable=True)
 
     def serialize(self):
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
+            "terrain": self.terrain,
+            "population": self.population
+
         }
 
 
