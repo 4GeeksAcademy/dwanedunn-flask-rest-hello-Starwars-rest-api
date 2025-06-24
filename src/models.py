@@ -65,33 +65,52 @@ class Planets(db.Model):
         }
 
 
-class User_Planet(db.Model):
-    __tablename__ = 'user_planets'
+class Favorites(db.Model):
+    __tablename__ = 'favorites'
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(
         ForeignKey('users.id'), nullable=False)
     planet_id: Mapped[int] = mapped_column(
         ForeignKey('planets.id'), nullable=False)
-
-    def serialize(self):
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "planet_id": self.planet_id
-        }
-
-
-class User_Character(db.Model):
-    __tablename__ = 'user_characters'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey('users.id'), nullable=False)
-    character_id: Mapped[int] = mapped_column(
+    people_id: Mapped[int] = mapped_column(
         ForeignKey('characters.id'), nullable=False)
 
     def serialize(self):
         return {
             "id": self.id,
             "user_id": self.user_id,
-            "character_id": self.character_id
+            "planet_id": self.planet_id,
+            "people_id": self.people_id
         }
+
+
+# class User_Planet(db.Model):
+#     __tablename__ = 'user_planets'
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id: Mapped[int] = mapped_column(
+#         ForeignKey('users.id'), nullable=False)
+#     planet_id: Mapped[int] = mapped_column(
+#         ForeignKey('planets.id'), nullable=False)
+
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "user_id": self.user_id,
+#             "planet_id": self.planet_id
+#         }
+
+
+# class User_Character(db.Model):
+#     __tablename__ = 'user_characters'
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id: Mapped[int] = mapped_column(
+#         ForeignKey('users.id'), nullable=False)
+#     character_id: Mapped[int] = mapped_column(
+#         ForeignKey('characters.id'), nullable=False)
+
+#     def serialize(self):
+#         return {
+#             "id": self.id,
+#             "user_id": self.user_id,
+#             "character_id": self.character_id
+#         }
