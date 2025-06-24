@@ -113,12 +113,9 @@ def get_all_planets():
 def get_a_planet_by_id():
     # find_planet_id =
 
-    # DELETE FAV PLANET BY ID
-
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
 def delete_planet(planet_id):
-    # connect to the db
     planet = Planets.query.get_or_404(planet_id)
     if planet:
         db.session.delete(planet)
@@ -127,19 +124,17 @@ def delete_planet(planet_id):
     else:
         return jsonify({"error": "planet not found"}), 404
 
-# DELETE USER Fav People by id
 
-
-@app.route('[DELETE] /favorite/people/<int:people_id>', methods=['DELETE'])
+@app.route('/favorite/people/<int:people_id>', methods=['DELETE'])
 def delete_user_person_fav(fav_id):
 
     fav_planet = User_Character.query.get_or_404(fav_id)
     if fav_planet:
         db.session.delete(fav_planet)
         db.session.commit()
-        return jsonify({"message": "Fav Planet deleted successfully"}), 204
+        return jsonify({"message": "Fav Person deleted successfully"}), 204
     else:
-        return jsonify({"error": "Fav planet not found"}), 404
+        return jsonify({"error": "Fav Person not found"}), 404
 
 
 # Keep At the Bottom of the File
