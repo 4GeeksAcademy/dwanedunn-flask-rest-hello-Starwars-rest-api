@@ -52,15 +52,49 @@ def handle_all_users():
     return jsonify(response_body), 200
 
 # Get a List of all the people(Characters) in the DB
+# ?
 
 
 @app.route('/people', methods=['GET'])
 def get_all_people():
-    return jsonify({"msg":"all people from the DB"})
+    # make connection to the db
+    # make query to the people(character)table and get all the people
+    # return the people from the db
+    return jsonify({"msg": "all people from the DB"})
+
+# ?
 
 
-    # Keep At the Bottom of the File
-    # this only runs if `$ python src/app.py` is executed
+@app.route('/people/<int:people_id>', methods=['GET'])
+def get_single_person():
+    # connect to the db
+    # query for the person_id
+    # return the single person with that person_id
+    return jsonify({"msg": "Here is the person with person_id"})
+
+# ?
+
+
+@app.route('/planets', methods=['GET'])
+def get_all_planets():
+    # make connection to the db
+    # search for all the Planets
+    # return all the planets
+    return jsonify({"msg": "all planets from the DB"})
+
+# ?
+
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_single_planet():
+    # connect to the db
+    # query for the planet_id
+    # return the single planet with that planet_id
+    return jsonify({"msg": "Here is the planet with planet_id"})
+
+
+# Keep At the Bottom of the File
+# this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT, debug=False)
