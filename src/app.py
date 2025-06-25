@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Characters, Planets, User_Planet, User_Character
+from models import db, User, Characters, Planets, Favorites
 # from models import Classes
 
 app = Flask(__name__)
@@ -53,88 +53,81 @@ def sitemap():
     return generate_sitemap(app)
 
 
-@app.route('/users', methods=['GET'])
-def handle_all_users():
-
-    response_body = {
-        "msg": "return all the users in the db "
-    }
-
-    return jsonify(response_body), 200
-
-
-@app.route('/users/favorites/planets', methods=['GET'])
-def get_all_user_favorite_planets():
-    user_favorites = User_Planet.query.get_404()
-    if user_favorites:
-        return jsonify(user_favorites), 200
-
-
-@app.route('/users/favorites/people', methods=['GET'])
-def get_all_user_favorite_people():
-    user_favorite_people = User_Character.query.get_404()
-    if user_favorite_people:
-        return jsonify(user_favorite_people), 200
-
-
 @app.route('/people', methods=['GET'])
 def get_all_people():
-    people = Characters.query.all()
-    return jsonify([people.character_to_dict()] for character in Characters)
-
-    # make query to the people(character)table and get all the people
-    # return the people from the db
-    # return jsonify({"msg": "all people from the DB"})
+    all_people = Characters.query.all()
+    return jsonify([person.serialize() for person in all_people])
 
 
 @app.route('/people/<int:people_id>', methods=['GET'])
-def get_single_person():
-    # connect to the db
-    # query for the person_id
-    # return the single person with that person_id
-    return jsonify({"msg": "Here is the person with person_id"})
+def get_single_person(people_id):
+    person = Characters.query.get_or_404(people_id)
+    return jsonify(person.serialize())
 
 
-@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
-# def add_new_favorite_planet():
-# Build this
-@app.route('/favorite/people/<int:people_id>', methods=['POST'])
-# def add_new_favorite_people():
-# Build this
 @app.route('/planets', methods=['GET'])
 def get_all_planets():
-    # make connection to the db
-    # search for all the Planets
-    # return all the planets
-    return jsonify({"msg": "all planets from the DB"})
+    all_planets = Planets.query.all()
+    return jsonify([planet.serialize() for planet in all_planets])
 
 
 @app.route('/planets/<int:planet_id>', methods=['GET'])
-def get_a_planet_by_id():
-    # find_planet_id =
+def get_single_planet(planet_id):
+    planet = Planets.query.get_or_404(planet_id)
+    return jsonify(planet.serialize())
+
+
+@app.route('/users', methods=['GET'])
+def get_all_users():
+    all_users = User.query.all()
+    return jsonify([user.serialize() for user in all_users])
+
+
+@app.route('/users/<int:user_id>/favorites', methods=['GET'])
+def get_all_favorites(user_id):
+    current_user = User.query.get_or_404(user_id)
+    favorites = Favorites.query.filter_by(user_id == current_user.id).all()
+    return jsonify([favorite.serialize() for favorite in favorites])
+
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
+def add_favorite_planet(planet_id):
+    planet = Planets.query.get_or_404(planet_id)
+    user = User.query.first()
+    new_favorite = Favorites(user_id=user.id, planet_id=planet.id)
+    db.session.add(new_favorite)
+    db.session.commit()
+    return jsonify({"message": "New Favorite planet Added"})
+
+
+@app.route('/favorite/people/<int:people_id>', methods=['POST'])
+def add_favorite_people(people_id):
+    person = Characters.query.get_or_404(people_id)
+    user = User.query.first()
+    new_favorite = Favorites(user_id=user.id, people_id=person.id)
+    db.session.add(new_favorite)
+    db.session.commit()
+    return jsonify({"message": "New Favorite Character Added"})
 
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
-def delete_planet(planet_id):
-    planet = Planets.query.get_or_404(planet_id)
-    if planet:
-        db.session.delete(planet)
+def delete_fav_planet(planet_id):
+    user = User.query.first()
+    result = db.session.query(Favorites).filter_by(
+        user_id=user.id, planet_id=planet_id).delete()
+    if result > 0:
         db.session.commit()
-        return jsonify({"message": "Planet deleted successfully"}), 204
-    else:
-        return jsonify({"error": "planet not found"}), 404
+    return jsonify({"message": "Favorite Planet deleted"})
 
 
 @app.route('/favorite/people/<int:people_id>', methods=['DELETE'])
-def delete_user_person_fav(fav_id):
-
-    fav_planet = User_Character.query.get_or_404(fav_id)
-    if fav_planet:
-        db.session.delete(fav_planet)
+def delete_fav_person(people_id):
+    user = User.query.first()
+    result = db.session.query(Favorites).filter_by(
+        user_id=user.id, ppeople_id=people_id).delete()
+    if result > 0:
         db.session.commit()
-        return jsonify({"message": "Fav Person deleted successfully"}), 204
-    else:
-        return jsonify({"error": "Fav Person not found"}), 404
+    return jsonify({"message": "Favorite Person deleted"})
 
 
 # Keep At the Bottom of the File
